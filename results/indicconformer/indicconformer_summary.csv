@@ -1,0 +1,2 @@
+model,decoding,dataset,samples,reference_words,hits,substitutions,deletions,insertions,corpus_wer,corpus_wer_percent
+ai4bharat/indic-conformer-600m-multilingual,ctc,ai4bharat/IndicVoices telugu valid,3295,37350,27963,8072,1315,1011,0.27839357429718875,27.839357429718874

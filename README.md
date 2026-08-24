@@ -46,10 +46,30 @@ DhwaniLab/
 │   ├── indicvoices_baseline.ipynb      IndicWhisper baseline, end to end
 │   ├── indicconformer_baseline.ipynb   IndicConformer baseline, end to end
 │   └── model_comparison.ipynb          Integrity checks + unified WER recomputation
+├── results/
+│   ├── indicwhisper/
+│   │   └── indicvoices_telugu_valid.csv
+│   └── indicconformer/
+│       ├── indicvoices_telugu_valid.csv
+│       └── indicconformer_summary.csv
 └── README.md
 ```
 
-Per-utterance prediction CSVs are written to Google Drive under `DhwaniLab/results/<model>/` and are not yet committed to the repository.
+### Result files
+
+`indicvoices_telugu_valid.csv` holds one row per utterance — 3,295 rows per model:
+
+| Column | Meaning |
+|---|---|
+| `index` | position in the streamed validation split, 0–3294 |
+| `speaker_id` | speaker identifier from IndicVoices |
+| `duration` | utterance length in seconds |
+| `reference` | ground-truth transcript, whitespace-normalized |
+| `prediction` | model output, whitespace-normalized |
+| `wer` | per-utterance WER |
+| `substitutions`, `deletions`, `insertions` | per-utterance error counts |
+
+Because predictions are stored as text, any additional metric — OI-WER, CER, per-speaker breakdowns — can be computed from these files without re-running inference on a GPU.
 
 ## Evaluation protocol
 
@@ -109,7 +129,7 @@ This is a packaging constraint, not a modeling one, and it generalizes: models r
 - [ ] CER alongside WER
 - [ ] Paired significance testing over utterances
 - [ ] IndicConformer RNNT decoding as a third configuration
-- [ ] Commit per-utterance result CSVs for full reproducibility
+- [x] Commit per-utterance result CSVs for full reproducibility
 
 ## References
 
