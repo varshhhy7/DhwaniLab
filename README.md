@@ -13,7 +13,7 @@ Benchmarking pretrained Indic ASR models on Telugu speech, under a single evalua
 
 DhwaniLab evaluates publicly released Telugu ASR models on the **same 3,295 utterances** from the IndicVoices validation split, scored through an **identical WER pipeline**, so that reported differences reflect the models rather than the harness.
 
-Every model is run without an external language model, with per-utterance predictions written to CSV so that any metric — WER today, OI-WER and CER next — can be recomputed from stored text without re-running inference.
+Every model is run without an external language model, with per-utterance predictions written to CSV so that any metric — WER today, OIWER and CER next — can be recomputed from stored text without re-running inference.
 
 ## Results
 
@@ -69,7 +69,7 @@ DhwaniLab/
 | `wer` | per-utterance WER |
 | `substitutions`, `deletions`, `insertions` | per-utterance error counts |
 
-Because predictions are stored as text, any additional metric — OI-WER, CER, per-speaker breakdowns — can be computed from these files without re-running inference on a GPU.
+Because predictions are stored as text, any additional metric — OIWER, CER, per-speaker breakdowns — can be computed from these files without re-running inference on a GPU.
 
 ## Evaluation protocol
 
@@ -124,7 +124,7 @@ This is a packaging constraint, not a modeling one, and it generalizes: models r
 - [x] IndicWhisper baseline on IndicVoices Telugu
 - [x] IndicConformer baseline on IndicVoices Telugu
 - [x] Unified comparison with reference-integrity verification
-- [ ] OI-WER (orthographically independent WER), following the IndicVoices paper's definition
+- [ ] OIWER (Orthographically-Informed WER), following [arXiv:2603.00941](https://arxiv.org/abs/2603.00941)
 - [ ] Error analysis: WER vs duration, per-speaker breakdown, substitution pairs, code-mixing and numerals
 - [ ] CER alongside WER
 - [ ] Paired significance testing over utterances
@@ -137,6 +137,8 @@ This is a packaging constraint, not a modeling one, and it generalizes: models r
 - [IndicConformer](https://huggingface.co/ai4bharat/indic-conformer-600m-multilingual) — AI4Bharat
 - [IndicWhisper / Vistaar](https://github.com/AI4Bharat/vistaar) — AI4Bharat
 - [jiwer](https://github.com/jitsi/jiwer) — WER computation
+- [Towards Orthographically-Informed Evaluation of Speech Recognition Systems for Indian Languages](https://arxiv.org/abs/2603.00941) — defines OIWER
+- [OIWER benchmarking framework](https://github.com/AI4Bharat/OIWER-Orthographically-Informed-Benchmarking-for-ASR) — AI4Bharat reference implementation
 
 ## Acknowledgements
 
