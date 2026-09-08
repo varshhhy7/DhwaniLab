@@ -19,14 +19,17 @@ Every model is run without an external language model, with per-utterance predic
 
 **IndicVoices Telugu · validation split · 3,295 utterances · 37,350 reference words**
 
-| Model | Corpus WER | Substitutions | Deletions | Insertions | Decoding |
-|---|---|---|---|---|---|
-| **IndicConformer** (`indic-conformer-600m-multilingual`) | **27.84%** | 8,072 | 1,315 | 1,011 | greedy CTC |
-| **IndicWhisper** (`whisper-medium-te_alldata_multigpu`) | 56.74% | 14,560 | 4,627 | 2,004 | autoregressive |
+| Model | WER | OI-WER | S | D | I | Decoding |
+|---|---|---|---|---|---|---|
+| **IndicConformer** (`indic-conformer-600m-multilingual`) | **27.84%** | **26.92%** | 8,072 | 1,315 | 1,011 | greedy CTC |
+| **IndicWav2Vec** (`te.pt`, Fairseq) | 54.56% | 52.48% | 15,915 | 2,935 | 1,528 | greedy CTC |
+| **IndicWhisper** (`whisper-medium-te_alldata_multigpu`) | 56.74% | 54.34% | 14,560 | 4,627 | 2,004 | autoregressive |
 
-IndicConformer leads by **28.9 percentage points**.
+IndicConformer leads by **26.7 percentage points** over the next best model. The ranking is
+identical under both metrics. OI-WER here is a rule-based approximation &mdash; see
+[OI-WER methodology](#oi-wer-methodology).
 
-Both models were scored against byte-identical references (verified: 3,295/3,295 matching) over the same 37,350 reference words.
+All three models were scored against byte-identical references (verified: 3,295/3,295 matching) over the same 37,350 reference words.
 
 ### Reading the results
 
@@ -43,15 +46,22 @@ Two caveats matter for interpretation, and neither is visible in the WER column 
 ```
 DhwaniLab/
 ├── notebooks/
-│   ├── indicvoices_baseline.ipynb      IndicWhisper baseline, end to end
-│   ├── indicconformer_baseline.ipynb   IndicConformer baseline, end to end
-│   └── model_comparison.ipynb          Integrity checks + unified WER recomputation
+│   ├── indicvoices_baseline.ipynb      IndicWhisper baseline
+│   ├── indicconformer_baseline.ipynb   IndicConformer baseline
+│   ├── indicwav2vec_baseline.ipynb     IndicWav2Vec baseline (isolated Fairseq env)
+│   ├── model_comparison.ipynb          Integrity checks + unified WER recomputation
+│   └── oiwer_evaluation.ipynb          Optional LLM-based variant generation
+├── oiwer/
+│   ├── oiwer.py                        Variant-aware alignment engine
+│   ├── rules.py                        Telugu ITN, merge/split, normalization
+│   ├── run_oiwer.py                    Ablation runner
+│   └── test_oiwer.py                   Unit tests
 ├── results/
-│   ├── indicwhisper/
+│   ├── indicwhisper/  indicconformer/  indicwav2vec/
 │   │   └── indicvoices_telugu_valid.csv
-│   └── indicconformer/
-│       ├── indicvoices_telugu_valid.csv
-│       └── indicconformer_summary.csv
+│   └── oiwer/
+│       └── oiwer_comparison.csv
+├── reports/
 └── README.md
 ```
 
@@ -95,11 +105,59 @@ Each run writes `index, speaker_id, duration, reference, prediction, wer, substi
 
 **IndicConformer** — `ai4bharat/indic-conformer-600m-multilingual`, a **gated** HuggingFace repository requiring access approval. Loaded with `trust_remote_code=True`; the remote code resolves to an ONNX Runtime model (`model_onnx.IndicASRModel`), so weights live outside the PyTorch module graph — `model.parameters()` is legitimately empty and `.to(device)` is a no-op. Called as `model(waveform, "te", "ctc")`.
 
-### Excluded: IndicWav2Vec
+**IndicWav2Vec** — AI4Bharat never published Telugu weights in HuggingFace format
+(`ai4bharat/indicwav2vec_v1_telugu` is an empty repository), so the only Telugu artifact is a Fairseq
+`.pt` checkpoint (3.53 GB) requiring Python 3.10 and torch 1.13. That stack cannot coexist with the
+runtime the other two models use, so it runs in an **isolated uv virtual environment** driven by a
+subprocess decoder, with audio pre-dumped to disk so the old environment never touches `datasets`.
+Decoded with greedy CTC (Viterbi), no language model.
 
-IndicWav2Vec was evaluated and dropped. AI4Bharat never published Telugu weights in HuggingFace format — `ai4bharat/indicwav2vec_v1_telugu` is an empty repository — leaving a Fairseq `.pt` checkpoint as the only Telugu artifact. That checkpoint requires Python 3.10, torch 1.13, omegaconf 2.0.6 and hydra 1.0.7, which cannot coexist with the modern runtime the rest of the pipeline uses. Running it would require an isolated virtual environment, a subprocess decoder, a pre-dumped audio corpus and hand-written CTC decoding — substantial scaffolding that would not change the finding.
+Note that AI4Bharat's official IndicWav2Vec pipeline uses **KenLM + lexicon decoding**. We
+deliberately skipped that so all three models are compared without an external LM; our 54.56% is
+therefore an LM-free figure and is not directly comparable to published numbers that use LM decoding.
 
-This is a packaging constraint, not a modeling one, and it generalizes: models released as artifacts for a stable framework are cheap to benchmark, while models welded to their training framework drag that framework's entire dependency era into the evaluation runtime.
+This packaging difference generalizes: models released as artifacts for a stable framework are cheap
+to benchmark, while models welded to their training framework drag that framework's entire dependency
+era into the evaluation runtime.
+
+## OI-WER methodology
+
+OI-WER accepts a **set of valid spellings** at each reference position instead of a single string, so
+a prediction matching any accepted variant counts as a hit rather than a substitution. The engine
+(`oiwer/oiwer.py`) aligns a segment lattice against the prediction by dynamic programming; a variant
+may span multiple words, so one reference word can match two predicted words and vice versa. The
+denominator stays the original reference word count, keeping WER and OI-WER directly comparable.
+
+Variants are generated by **deterministic rules**, not an LLM:
+
+| Rule | Effect |
+|---|---|
+| Inverse text normalization | Telugu number words ↔ digits (`ఎనిమిది` ↔ `8`), incl. compounds to lakh/crore |
+| Compound merge / split | `మూడువేల` ↔ `మూడు వేల` — pure string concatenation, no lexicon needed |
+| Annotation tags | `<unintelligible>` (60 utterances) removed from references |
+| Surface normalization | Unicode NFC, punctuation, replacement chars, Latin case folding |
+
+Per-rule ablation (`python oiwer/run_oiwer.py`):
+
+| Configuration | IndicConformer | IndicWav2Vec | IndicWhisper |
+|---|---|---|---|
+| WER (baseline) | 27.839% | 54.560% | 56.736% |
+| + strip `<unintelligible>` | 27.845% | 54.576% | 56.765% |
+| + surface normalization | 27.845% | 54.576% | 56.762% |
+| + ITN numbers | 27.839% | 54.386% | 56.236% |
+| + merge / split = **OI-WER** | **26.925%** | **52.485%** | **54.338%** |
+
+The gain comes almost entirely from substitutions (232 / 522 / 661 removed), the expected signature
+since accepting a variant can only convert a wrong word into a correct one. ITN removed 124
+substitutions from IndicWhisper and **zero** from IndicConformer, which never emits digits — the
+digit-formatting penalty was entirely one-sided.
+
+**This is an approximation, not a reproduction of the published metric.** It covers 2 of the paper's
+7 variation categories; the remaining five (matra/diacritic, loanword spellings, phonetic, ligature,
+sandhi) need a lexicon or an LLM. It is closer to the paper's WER-SN baseline than to full OI-WER,
+which is why our 0.9–2.4 point gains are below the paper's 6.3-point average. A local `gemma3:4b`
+was evaluated for variant generation and rejected: roughly half its proposed Telugu variants were
+hallucinated or omitted.
 
 ## Reproducing
 
@@ -111,9 +169,12 @@ This is a packaging constraint, not a modeling one, and it generalizes: models r
 
 **Order**
 
-1. `notebooks/indicvoices_baseline.ipynb` — IndicWhisper, writes `results/indicwhisper/indicvoices_telugu_valid.csv`
-2. `notebooks/indicconformer_baseline.ipynb` — IndicConformer, writes `results/indicconformer/indicvoices_telugu_valid.csv`
-3. `notebooks/model_comparison.ipynb` — verifies both CSVs and recomputes WER side by side (CPU is sufficient)
+1. `notebooks/indicvoices_baseline.ipynb` — IndicWhisper
+2. `notebooks/indicconformer_baseline.ipynb` — IndicConformer
+3. `notebooks/indicwav2vec_baseline.ipynb` — IndicWav2Vec (isolated Fairseq environment)
+4. `notebooks/model_comparison.ipynb` — verifies all three CSVs and recomputes WER (CPU only)
+5. `python oiwer/run_oiwer.py` — OI-WER with per-rule ablation (CPU only, runs in seconds)
+6. `python oiwer/test_oiwer.py` — 9 tests, incl. exact reproduction of the published WER figures
 
 `model_comparison.ipynb` scores over the **intersection** of indices present in both CSVs, so it produces an honest comparison even while one run is still in progress.
 
@@ -124,11 +185,14 @@ This is a packaging constraint, not a modeling one, and it generalizes: models r
 - [x] IndicWhisper baseline on IndicVoices Telugu
 - [x] IndicConformer baseline on IndicVoices Telugu
 - [x] Unified comparison with reference-integrity verification
-- [ ] OIWER (Orthographically-Informed WER), following [arXiv:2603.00941](https://arxiv.org/abs/2603.00941)
+- [x] OI-WER, rule-based approximation following [arXiv:2603.00941](https://arxiv.org/abs/2603.00941)
+- [ ] Full OI-WER with LLM-generated + human-reviewed variants (all 7 categories)
 - [ ] Error analysis: WER vs duration, per-speaker breakdown, substitution pairs, code-mixing and numerals
 - [ ] CER alongside WER
 - [ ] Paired significance testing over utterances
+- [x] IndicWav2Vec baseline (isolated Fairseq environment)
 - [ ] IndicConformer RNNT decoding as a third configuration
+- [ ] IndicWav2Vec with KenLM + lexicon decoding, matching AI4Bharat's official pipeline
 - [x] Commit per-utterance result CSVs for full reproducibility
 
 ## References

@@ -1,0 +1,2 @@
+model,decoding,dataset,samples,reference_words,hits,substitutions,deletions,insertions,corpus_wer,corpus_wer_percent
+ai4bharat/IndicWav2Vec te.pt fairseq,greedy ctc,ai4bharat/IndicVoices telugu valid,3295,37350,18500,15915,2935,1528,0.5455957161981259,54.55957161981259
