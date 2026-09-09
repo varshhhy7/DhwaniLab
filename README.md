@@ -58,8 +58,7 @@ DhwaniLab/
 │   ├── indicvoices_baseline.ipynb      IndicWhisper baseline
 │   ├── indicconformer_baseline.ipynb   IndicConformer baseline
 │   ├── indicwav2vec_baseline.ipynb     IndicWav2Vec baseline (isolated Fairseq env)
-│   ├── model_comparison.ipynb          Integrity checks + unified WER recomputation
-│   └── oiwer_evaluation.ipynb          Optional LLM-based variant generation
+│   └── model_comparison.ipynb          Integrity checks + unified WER recomputation
 ├── oiwer/
 │   ├── oiwer.py                        Variant-aware alignment engine
 │   ├── rules.py                        Telugu ITN, merge/split, normalization
@@ -287,7 +286,7 @@ offloaded, 4 parallel slots) the full split took roughly two hours at 0.5 uttera
 Variants depend only on the **reference**, never on a model's predictions, so they are generated once
 and reused for all three models — and remain valid for any model evaluated later.
 
-`model_comparison.ipynb` scores over the **intersection** of indices present in both CSVs, so it produces an honest comparison even while one run is still in progress.
+`model_comparison.ipynb` scores over the **intersection** of indices present across all three CSVs, so it produces an honest comparison even while one run is still in progress.
 
 **Environment note.** IndicConformer's inference path needs only `transformers`, `datasets`, `onnxruntime`, `huggingface_hub` and `jiwer`. Installing `nemo_toolkit[asr]` is unnecessary and actively harmful in Colab: it pins `protobuf==3.20.3`, which breaks `transformers.modeling_utils`, downgrades `transformers`, and cascades into `huggingface_hub`/`datasets` import failures.
 
