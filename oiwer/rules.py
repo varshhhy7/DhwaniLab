@@ -123,27 +123,25 @@ def number_spans(tokens, max_span=8):
     return spans
 
 
-def build_segments(reference, enable_itn=True):
+def build_spans(reference, enable_itn=True):
     tokens = [t for t in canonical(strip_tags(reference)).split() if t]
 
     if not tokens:
         return [], tokens
 
-    segments = [[[t]] for t in tokens]
-
     if not enable_itn:
-        return segments, tokens
+        return [(i, i + 1, [[t]]) for i, t in enumerate(tokens)], tokens
 
-    spans = number_spans(tokens)
-    if not spans:
-        return segments, tokens
+    number = number_spans(tokens)
+    if not number:
+        return [(i, i + 1, [[t]]) for i, t in enumerate(tokens)], tokens
 
     rebuilt = []
     cursor = 0
 
-    for start, end in spans:
+    for start, end in number:
         while cursor < start:
-            rebuilt.append(segments[cursor])
+            rebuilt.append((cursor, cursor + 1, [[tokens[cursor]]]))
             cursor += 1
 
         span_tokens = tokens[start:end]
@@ -161,14 +159,19 @@ def build_segments(reference, enable_itn=True):
                 if joined and joined != digits and len(joined) == end - start:
                     variants.append([joined])
 
-        rebuilt.append(variants)
+        rebuilt.append((start, end, variants))
         cursor = end
 
-    while cursor < len(segments):
-        rebuilt.append(segments[cursor])
+    while cursor < len(tokens):
+        rebuilt.append((cursor, cursor + 1, [[tokens[cursor]]]))
         cursor += 1
 
     return rebuilt, tokens
+
+
+def build_segments(reference, enable_itn=True):
+    spans, tokens = build_spans(reference, enable_itn=enable_itn)
+    return [variants for _, _, variants in spans], tokens
 
 
 def prepare(reference, prediction, enable_itn=True, drop_tags=True):

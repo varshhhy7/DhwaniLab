@@ -1,0 +1,10 @@
+model,configuration,ours_percent,official_percent,ours_substitutions,official_substitutions,ours_deletions,official_deletions,ours_insertions,official_insertions,reference_words
+indicconformer,no variants,27.845,27.845,8018,8076,1304,1275,1061,1032,37289
+indicwav2vec,no variants,54.576,54.576,15919,16101,2889,2798,1543,1452,37289
+indicwhisper,no variants,56.762,56.762,14367,14683,4684,4526,2115,1957,37289
+indicconformer,rules only,26.925,27.845,7834,8076,1307,1275,899,1032,37289
+indicwav2vec,rules only,52.485,54.576,15433,16101,2871,2798,1267,1452,37289
+indicwhisper,rules only,54.338,56.497,13749,14591,4651,4511,1862,1965,37289
+indicconformer,rules + LLM,26.083,26.898,7556,7764,1306,1314,864,952,37289
+indicwav2vec,rules + LLM,51.643,53.584,15149,15734,2878,2878,1230,1369,37289
+indicwhisper,rules + LLM,53.407,55.392,13406,14153,4667,4601,1842,1901,37289

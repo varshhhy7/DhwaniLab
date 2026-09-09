@@ -1,0 +1,129 @@
+{
+  "variant_records": 3256,
+  "scope": "full",
+  "utterances": 3295,
+  "configurations": {
+    "WER (published protocol)": {
+      "indicconformer": {
+        "wer_percent": 27.839,
+        "substitutions": 8066,
+        "deletions": 1318,
+        "insertions": 1014,
+        "reference_words": 37350
+      },
+      "indicwav2vec": {
+        "wer_percent": 54.56,
+        "substitutions": 15955,
+        "deletions": 2915,
+        "insertions": 1508,
+        "reference_words": 37350
+      },
+      "indicwhisper": {
+        "wer_percent": 56.736,
+        "substitutions": 14410,
+        "deletions": 4702,
+        "insertions": 2079,
+        "reference_words": 37350
+      }
+    },
+    "WER (normalized text)": {
+      "indicconformer": {
+        "wer_percent": 27.845,
+        "substitutions": 8018,
+        "deletions": 1304,
+        "insertions": 1061,
+        "reference_words": 37289
+      },
+      "indicwav2vec": {
+        "wer_percent": 54.576,
+        "substitutions": 15919,
+        "deletions": 2889,
+        "insertions": 1543,
+        "reference_words": 37289
+      },
+      "indicwhisper": {
+        "wer_percent": 56.762,
+        "substitutions": 14367,
+        "deletions": 4684,
+        "insertions": 2115,
+        "reference_words": 37289
+      }
+    },
+    "OIWER rules only": {
+      "indicconformer": {
+        "wer_percent": 26.925,
+        "substitutions": 7834,
+        "deletions": 1307,
+        "insertions": 899,
+        "reference_words": 37289
+      },
+      "indicwav2vec": {
+        "wer_percent": 52.485,
+        "substitutions": 15433,
+        "deletions": 2871,
+        "insertions": 1267,
+        "reference_words": 37289
+      },
+      "indicwhisper": {
+        "wer_percent": 54.338,
+        "substitutions": 13749,
+        "deletions": 4651,
+        "insertions": 1862,
+        "reference_words": 37289
+      }
+    },
+    "OIWER LLM only": {
+      "indicconformer": {
+        "wer_percent": 26.834,
+        "substitutions": 7712,
+        "deletions": 1307,
+        "insertions": 987,
+        "reference_words": 37289
+      },
+      "indicwav2vec": {
+        "wer_percent": 53.498,
+        "substitutions": 15583,
+        "deletions": 2906,
+        "insertions": 1460,
+        "reference_words": 37289
+      },
+      "indicwhisper": {
+        "wer_percent": 55.606,
+        "substitutions": 13979,
+        "deletions": 4707,
+        "insertions": 2049,
+        "reference_words": 37289
+      }
+    },
+    "OIWER rules + LLM": {
+      "indicconformer": {
+        "wer_percent": 26.083,
+        "substitutions": 7556,
+        "deletions": 1306,
+        "insertions": 864,
+        "reference_words": 37289
+      },
+      "indicwav2vec": {
+        "wer_percent": 51.643,
+        "substitutions": 15149,
+        "deletions": 2878,
+        "insertions": 1230,
+        "reference_words": 37289
+      },
+      "indicwhisper": {
+        "wer_percent": 53.407,
+        "substitutions": 13406,
+        "deletions": 4667,
+        "insertions": 1842,
+        "reference_words": 37289
+      }
+    }
+  },
+  "llm_slot_statistics": {
+    "slots": 36613,
+    "anchored": 32782,
+    "variants_offered": 12247,
+    "variants_kept": 6765,
+    "spans_augmented": 6658
+  }
+}

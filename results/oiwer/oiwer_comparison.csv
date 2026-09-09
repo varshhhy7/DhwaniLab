@@ -1,4 +1,0 @@
-model,samples,wer_percent,oiwer_percent,improvement_points,wer_substitutions,oiwer_substitutions,substitutions_removed,wer_deletions,wer_insertions,reference_words
-indicconformer,3295,27.839,26.925,0.915,8066,7834,232,1318,1014,37350
-indicwav2vec,3295,54.56,52.485,2.075,15955,15433,522,2915,1508,37350
-indicwhisper,3295,56.736,54.338,2.399,14410,13749,661,4702,2079,37350
