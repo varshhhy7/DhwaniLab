@@ -1,0 +1,87 @@
+================================================================================
+PROMPT A - full detail (best for models with strong text rendering:
+           gpt-image-1, Imagen 3, Ideogram, Flux.1 dev)
+================================================================================
+
+A hand-drawn whiteboard diagram photographed straight on. Black dry-erase marker
+on a clean white board, with red and blue marker for emphasis. Technical
+flowchart style: hand-lettered block capitals, hand-drawn rectangles, a database
+cylinder, a funnel shape, and arrows with hand-drawn arrowheads. Slightly uneven
+lines, visible marker texture, faint eraser smudges. Soft even lighting, no
+glare, no hands, no people, no reflections.
+
+Title hand-written across the top: "TELUGU ASR BENCHMARKING - WER vs OI-WER"
+
+The board shows a pipeline flowing top to bottom in four bands.
+
+BAND 1, top centre: a database cylinder labelled
+"IndicVoices Telugu - valid split - 3295 utterances".
+
+BAND 2: three arrows fan down from the cylinder to three boxes side by side,
+labelled "IndicWhisper", "IndicConformer", "IndicWav2Vec". Small notes under
+each: "autoregressive", "greedy CTC", "isolated Fairseq env". The three boxes
+feed one wide box below them: "per-utterance CSV - reference, prediction, S D I".
+
+BAND 3: two sources side by side.
+  Left, a box labelled "RULES" with three lines under it: "numbers to digits",
+  "merge / split words", "normalise text".
+  Right, a box labelled "gemma3:4b - local LLM" with an arrow down into a funnel
+  shape labelled "FILTER - 45 percent rejected". Three short bullets beside the
+  funnel: "must keep original word", "same consonant skeleton", "edit distance
+  under 34 percent".
+  Arrows from the RULES box and from the funnel converge into a single box
+  labelled "VARIANT LATTICE - each reference word gets a set of accepted
+  spellings".
+
+BAND 4: an arrow from the lattice into a box "DYNAMIC PROGRAMMING ALIGNMENT".
+From it, two result boxes drawn in red marker, side by side:
+  "WER - 27.8 / 54.6 / 56.8"
+  "OI-WER - 26.1 / 51.6 / 53.4"
+To the right, a separate box in blue marker: "CROSS-CHECK vs AI4Bharat scorer -
+exact match", with a blue arrow pointing back into the alignment box.
+
+Bottom right corner: a blue star and the hand-written note "variants come from
+the REFERENCE only - generated once, reused for all 3 models".
+
+
+================================================================================
+PROMPT B - simplified (use this for Stable Diffusion / SDXL / SD 1.5, which
+           cannot render long text; fewer labels means fewer garbled ones)
+================================================================================
+
+Hand-drawn whiteboard flowchart, black dry-erase marker on white board, red and
+blue marker accents. Top to bottom pipeline. At the top a database cylinder.
+Below it three rectangles side by side. Below those one wide rectangle. Below
+that, on the left a rectangle, on the right a rectangle above a funnel shape,
+both joining into one rectangle in the centre. At the bottom, one rectangle
+splitting into two red-outlined rectangles. Hand-drawn arrows connecting every
+stage. Hand-lettered block capital labels, uneven marker lines, marker texture,
+faint eraser smudges. Photographed straight on, soft even lighting, no glare,
+no hands, no people.
+
+
+================================================================================
+NEGATIVE PROMPT (for Stable Diffusion and any model that accepts one)
+================================================================================
+
+blurry, low resolution, jpeg artifacts, watermark, signature, glare, reflection,
+hands, fingers, people, person, photo of a room, cluttered desk, 3d render,
+oil painting, cartoon character, colourful background, dark background,
+perspective distortion, tilted camera, cropped edges
+
+
+================================================================================
+NOTES
+================================================================================
+
+Every current image model garbles small text. Expect the shapes and the layout
+to come out well and the labels to come out as convincing-looking nonsense.
+
+Practical options, in order of how much text survives:
+  1. gpt-image-1, Imagen 3, or Ideogram  - short labels usually legible
+  2. Flux.1 dev                          - short labels sometimes legible
+  3. SDXL / SDXL-Turbo / SD 1.5          - labels are decorative only
+
+If the diagram is going in front of a reviewer, use
+scripts/render_flow_diagram.py instead - it draws the same flow as SVG with
+real, correct text.

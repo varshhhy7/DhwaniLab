@@ -59,6 +59,10 @@ DhwaniLab/
 │   ├── indicconformer_baseline.ipynb   IndicConformer baseline
 │   ├── indicwav2vec_baseline.ipynb     IndicWav2Vec baseline (isolated Fairseq env)
 │   └── model_comparison.ipynb          Integrity checks + unified WER recomputation
+├── scripts/
+│   ├── render_flow_diagram.py          Pipeline diagram as SVG/PNG (correct text)
+│   ├── generate_flow_image.py          Same diagram via an image model (text garbles)
+│   └── project_flow_prompt.txt         Whiteboard-style prompt for image models
 ├── oiwer/
 │   ├── oiwer.py                        Variant-aware alignment engine
 │   ├── rules.py                        Telugu ITN, merge/split, normalization

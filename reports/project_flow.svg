@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="1210" viewBox="0 0 1520 1210">
+<rect width="1520" height="1210" fill="#ffffff"/>
+<text x="60.0" y="52.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="25" font-weight="700" fill="#1a2b4c" text-anchor="start">DhwaniLab — Telugu ASR Benchmarking</text>
+<text x="60.0" y="78.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" fill="#3d4b63" text-anchor="start">Phase 1 evaluation pipeline: three pretrained models, scored with WER and Orthographically-Informed WER</text>
+<path d="M60,92 H1460" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M590.0,131.0 a170.0,13.0 0 0 1 340.0,0 v50.0 a170.0,13.0 0 0 1 -340.0,0 z" fill="#eaf0f9" stroke="#2f5c9e" stroke-width="1.6"/>
+<path d="M590.0,131.0 a170.0,13.0 0 0 0 340.0,0" fill="none" stroke="#2f5c9e" stroke-width="1.6"/>
+<text x="760.0" y="158.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">IndicVoices Telugu · valid split</text>
+<text x="760.0" y="177.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">3,295 utterances · 37,289 reference words</text>
+<path d="M760,194 V214" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M340,214 H1180" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M340,214 V244" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="335.4,237.0 344.6,237.0 340.0,244.0" fill="#9aa4b2"/>
+<path d="M760,214 V244" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="755.4,237.0 764.6,237.0 760.0,244.0" fill="#9aa4b2"/>
+<path d="M1180,214 V244" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="1175.4,237.0 1184.6,237.0 1180.0,244.0" fill="#9aa4b2"/>
+<rect x="160.0" y="244.0" width="360.0" height="92.0" rx="8" fill="#eaf0f9" stroke="#2f5c9e" stroke-width="1.6"/>
+<text x="340.0" y="280.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">IndicWhisper</text>
+<text x="340.0" y="304.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">whisper-medium-te · HuggingFace</text>
+<text x="340.0" y="321.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">autoregressive decoding</text>
+<rect x="580.0" y="244.0" width="360.0" height="92.0" rx="8" fill="#eaf0f9" stroke="#2f5c9e" stroke-width="1.6"/>
+<text x="760.0" y="280.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">IndicConformer</text>
+<text x="760.0" y="304.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">indic-conformer-600m · ONNX</text>
+<text x="760.0" y="321.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">greedy CTC</text>
+<rect x="1000.0" y="244.0" width="360.0" height="92.0" rx="8" fill="#eaf0f9" stroke="#2f5c9e" stroke-width="1.6"/>
+<text x="1180.0" y="280.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">IndicWav2Vec</text>
+<text x="1180.0" y="304.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">te.pt · Fairseq, isolated venv</text>
+<text x="1180.0" y="321.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">greedy CTC, no language model</text>
+<path d="M340,336 V358" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M760,336 V358" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M1180,336 V358" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M340,358 H1180" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M760,358 V386" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="755.4,379.0 764.6,379.0 760.0,386.0" fill="#9aa4b2"/>
+<rect x="310.0" y="386.0" width="900.0" height="70.0" rx="8" fill="#f2f4f7" stroke="#9aa4b2" stroke-width="1.6"/>
+<text x="760.0" y="419.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="600" fill="#1a2b4c" text-anchor="middle">results/&lt;model&gt;/indicvoices_telugu_valid.csv</text>
+<text x="760.0" y="443.5" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">index · speaker_id · duration · reference · prediction · S/D/I</text>
+<text x="985.0" y="478.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#7c8798" text-anchor="middle">the reference column only — never the predictions</text>
+<path d="M760,456 V486" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M380,486 H1140" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M380,486 V516" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="375.4,509.0 384.6,509.0 380.0,516.0" fill="#9aa4b2"/>
+<path d="M1140,486 V516" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="1135.4,509.0 1144.6,509.0 1140.0,516.0" fill="#9aa4b2"/>
+<rect x="120.0" y="516.0" width="520.0" height="132.0" rx="8" fill="#e8f4ec" stroke="#1c7c3f" stroke-width="1.6"/>
+<text x="380.0" y="563.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">Deterministic rules · oiwer/rules.py</text>
+<text x="380.0" y="587.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">Telugu number words  →  digits  (ITN)</text>
+<text x="380.0" y="604.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">compound merge / split by string equality</text>
+<text x="380.0" y="621.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">NFC, punctuation, &lt;unintelligible&gt; removal</text>
+<rect x="880.0" y="516.0" width="520.0" height="76.0" rx="8" fill="#fdf1e3" stroke="#b7791f" stroke-width="1.6"/>
+<text x="1140.0" y="552.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">gemma3:4b · local, via Ollama</text>
+<text x="1140.0" y="576.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">prompted with AI4Bharat's expert-verified Telugu guidelines</text>
+<path d="M1140,592 V616" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="1135.4,609.0 1144.6,609.0 1140.0,616.0" fill="#9aa4b2"/>
+<rect x="880.0" y="616.0" width="520.0" height="148.0" rx="8" fill="#fdf1e3" stroke="#b7791f" stroke-width="1.6"/>
+<text x="1140.0" y="671.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">oiwer/variant_filter.py</text>
+<text x="1140.0" y="695.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">1.  group must contain the original word</text>
+<text x="1140.0" y="712.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">2.  consonant skeleton within 1 edit</text>
+<text x="1140.0" y="729.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">3.  edit distance ≤ 34%, or equal without spaces</text>
+<text x="1140.0" y="750.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#b7791f" text-anchor="middle">12,247 offered  →  6,765 kept  ·  45% rejected</text>
+<path d="M380,648 V800 H752" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M1140,764 V800 H768" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M760,800 V830" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="755.4,823.0 764.6,823.0 760.0,830.0" fill="#9aa4b2"/>
+<rect x="460.0" y="830.0" width="600.0" height="84.0" rx="8" fill="#f2f4f7" stroke="#9aa4b2" stroke-width="1.6"/>
+<text x="760.0" y="870.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">Variant lattice</text>
+<text x="760.0" y="894.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">each reference word carries a set of accepted spellings</text>
+<path d="M760,914 V940" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="755.4,933.0 764.6,933.0 760.0,940.0" fill="#9aa4b2"/>
+<rect x="460.0" y="940.0" width="600.0" height="84.0" rx="8" fill="#f2f4f7" stroke="#1a2b4c" stroke-width="1.6"/>
+<text x="760.0" y="980.5" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">Dynamic-programming alignment</text>
+<text x="760.0" y="1004.5" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">oiwer/oiwer.py · fewest edits over the lattice</text>
+<rect x="1130.0" y="940.0" width="330.0" height="84.0" rx="8" fill="#eaf0f9" stroke="#2f5c9e" stroke-width="1.6"/>
+<text x="1295.0" y="972.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="600" fill="#1a2b4c" text-anchor="middle">Cross-check</text>
+<text x="1295.0" y="996.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">vs AI4Bharat oiwer_core.py</text>
+<text x="1295.0" y="1013.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#3d4b63" text-anchor="middle">exact agreement, no variants</text>
+<path d="M1130,982 H1074" fill="none" stroke="#2f5c9e" stroke-width="1.6"/>
+<polygon points="1075.0,977.4 1075.0,986.6 1068.0,982.0" fill="#2f5c9e"/>
+<path d="M760,1024 V1048" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M615,1048 H915" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<path d="M615,1048 V1074" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="610.4,1067.0 619.6,1067.0 615.0,1074.0" fill="#9aa4b2"/>
+<path d="M915,1048 V1074" fill="none" stroke="#9aa4b2" stroke-width="1.6"/>
+<polygon points="910.4,1067.0 919.6,1067.0 915.0,1074.0" fill="#9aa4b2"/>
+<rect x="470.0" y="1074.0" width="290.0" height="88.0" rx="8" fill="#fdecec" stroke="#b03030" stroke-width="1.6"/>
+<text x="615.0" y="1108.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">WER</text>
+<text x="615.0" y="1132.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" fill="#10233f" text-anchor="middle">27.8   /   54.6   /   56.8</text>
+<text x="615.0" y="1149.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" fill="#10233f" text-anchor="middle">conformer / wav2vec / whisper</text>
+<rect x="770.0" y="1074.0" width="290.0" height="88.0" rx="8" fill="#e8f4ec" stroke="#1c7c3f" stroke-width="1.6"/>
+<text x="915.0" y="1108.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="600" fill="#1a2b4c" text-anchor="middle">OI-WER</text>
+<text x="915.0" y="1132.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" fill="#10233f" text-anchor="middle">26.1   /   51.6   /   53.4</text>
+<text x="915.0" y="1149.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" fill="#10233f" text-anchor="middle">conformer / wav2vec / whisper</text>
+<text x="60.0" y="1190.0" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#7c8798" text-anchor="start">Variants depend on the reference alone, so they are generated once and reused for all three models.     Rules only: 26.9   /   52.5   /   54.3.     LLM only: 26.8   /   53.5   /   55.6.</text>
+</svg>
