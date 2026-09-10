@@ -2,15 +2,15 @@ model,configuration,wer_percent,substitutions,deletions,insertions,reference_wor
 indicconformer,WER (published protocol),27.839,8066,1318,1014,37350
 indicconformer,WER (normalized text),27.845,8018,1304,1061,37289
 indicconformer,OIWER rules only,26.925,7834,1307,899,37289
-indicconformer,OIWER LLM only,26.834,7712,1307,987,37289
-indicconformer,OIWER rules + LLM,26.083,7556,1306,864,37289
+indicconformer,OIWER LLM only,26.069,7507,1312,902,37289
+indicconformer,OIWER rules + LLM,25.6,7406,1312,828,37289
 indicwav2vec,WER (published protocol),54.56,15955,2915,1508,37350
 indicwav2vec,WER (normalized text),54.576,15919,2889,1543,37289
 indicwav2vec,OIWER rules only,52.485,15433,2871,1267,37289
-indicwav2vec,OIWER LLM only,53.498,15583,2906,1460,37289
-indicwav2vec,OIWER rules + LLM,51.643,15149,2878,1230,37289
+indicwav2vec,OIWER LLM only,52.688,15389,2936,1322,37289
+indicwav2vec,OIWER rules + LLM,51.42,15116,2880,1178,37289
 indicwhisper,WER (published protocol),56.736,14410,4702,2079,37350
 indicwhisper,WER (normalized text),56.762,14367,4684,2115,37289
 indicwhisper,OIWER rules only,54.338,13749,4651,1862,37289
-indicwhisper,OIWER LLM only,55.606,13979,4707,2049,37289
-indicwhisper,OIWER rules + LLM,53.407,13406,4667,1842,37289
+indicwhisper,OIWER LLM only,54.818,13783,4753,1905,37289
+indicwhisper,OIWER rules + LLM,53.26,13394,4676,1790,37289

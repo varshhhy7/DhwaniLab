@@ -97,8 +97,16 @@ def _coerce(obj, depth=0):
     return slots
 
 
+ARTIFACTS = {
+    ord("▁"): " ",
+    ord(" "): " ",
+    ord("​"): None,
+    ord("﻿"): None,
+}
+
+
 def parse_variants(text):
-    text = (text or "").strip()
+    text = (text or "").translate(ARTIFACTS).strip()
     if not text:
         return []
     try:

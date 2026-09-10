@@ -41,6 +41,7 @@ LABELS = {
 summary = json.loads((RESULTS / "oiwer_llm_full.json").read_text(encoding="utf-8"))
 CFG = summary["configurations"]
 SLOTS = summary["llm_slot_statistics"]
+GENERATOR = summary.get("variant_source", "a local LLM").replace("_", ":")
 
 RAW = "WER (published protocol)"
 NORM = "WER (normalized text)"
@@ -237,12 +238,12 @@ B("<b>Compound merging and splitting</b> &mdash; a reference token matches a gro
 B("<b>Annotation tag removal and surface normalization</b> &mdash; &lt;unintelligible&gt; markers are removed; "
   "Unicode NFC, punctuation and symbol stripping, and case folding for embedded Latin text are applied.")
 
-P("Source B &mdash; a local LLM (gemma3:4b via Ollama)", "h3")
+P("Source B &mdash; a local LLM ({} via Ollama)".format(GENERATOR), "h3")
 P("The paper generates variants with Gemini-2.5-Pro and then has native speakers review them. No LLM API was "
-  "available for this project, so the largest Gemma that fits in 5 GB of VRAM was run locally over all 3,295 "
+  "available for this project, so a local model small enough for 5 GB of VRAM was run over all 3,295 "
   "references, prompted with AI4Bharat's own expert-verified Telugu guideline examples, taken from their "
   "published repository.")
-P("A 4B model is not a substitute for Gemini plus human review, and it behaved accordingly: alongside genuine "
+P("A small local model is not a substitute for Gemini plus human review, and it behaved accordingly: alongside genuine "
   "spelling variants it produced translations, synonyms, and invented words. This matters more than it might "
   "appear, because <b>a bad variant can only ever make a score look better</b> &mdash; the alignment takes the "
   "minimum over variants, so an unfiltered hallucination silently forgives a real error. Every LLM-proposed "
@@ -253,8 +254,18 @@ B("<b>Anchoring.</b> A proposed group is discarded entirely unless it contains t
 B("<b>Consonant skeleton.</b> Telugu vowel signs, virama and anusvara are stripped from both strings; the "
   "remaining consonant skeletons must agree within one edit. Spelling variation preserves the skeleton; "
   "substituting a different word does not.")
+B("<b>Short-word guard.</b> For anchors of four characters or fewer the skeletons must match "
+  "<i>exactly</i> &mdash; only vowel signs may differ. On short words a single edit often lands on a "
+  "different real word, which neither of the tests above can detect.")
 B("<b>Edit ratio.</b> Character edit distance must be within 34% of the reference word's length, or the two "
   "must be identical once spaces are removed (which admits compound splits and merges).")
+P("The short-word guard was added after inspecting the accepted variants directly. Four pairs &mdash; "
+  + TE("ఈ") + "/" + TE("ఏ") + ", " + TE("మీకు") + "/" + TE("నీకు") + ", "
+  + TE("అది") + "/" + TE("ఆది") + ", " + TE("అండి") + "/" + TE("అంటే")
+  + " &mdash; were among the <i>most frequent</i> accepted variants and were each forgiving genuine "
+  "recognition errors on very common words. Adding the guard removed 1,588 of 6,765 accepted variants "
+  "(23%) and moved OI-WER <b>up</b> by 0.05 to 0.12 points. Every figure in this report is post-guard.",
+  "body")
 P("Worked examples, all taken from actual gemma3:4b output on this dataset: "
   + TE("రీచ్") + " &rarr; " + TE("రిచ్") + " is accepted (same skeleton, one edit); "
   + TE("తెలంగాణలో") + " &rarr; " + TE("తెలంగాణ లో") + " is accepted (compound split); "
@@ -265,7 +276,7 @@ P("Worked examples, all taken from actual gemma3:4b output on this dataset: "
 if SLOTS:
     table(
         [["LLM proposal stage", "Count"],
-         ["Word groups proposed by gemma3:4b", "{:,}".format(SLOTS.get("slots", 0))],
+         ["Word groups proposed by " + GENERATOR, "{:,}".format(SLOTS.get("slots", 0))],
          ["Groups anchored to a reference span", "{:,}".format(SLOTS.get("anchored", 0))],
          ["Alternative spellings offered", "{:,}".format(SLOTS.get("variants_offered", 0))],
          ["Alternatives that passed the filter", "{:,}".format(SLOTS.get("variants_kept", 0))],
@@ -276,6 +287,34 @@ if SLOTS:
     if _offered:
         P("The filter rejected {:.0f}% of what the model proposed.".format(
             100.0 * (_offered - _kept) / _offered), "cap")
+
+P("4.3 Choosing the variant generator", "h3")
+P("Two local models were run over the identical 3,295 references, with the identical prompt and the "
+  "identical filter. The smaller one won on every ASR model.")
+table(
+    [["", "gemma3:4b", "gemma3n:e2b"],
+     ["Word groups proposed", "36,613", "37,069"],
+     ["Groups anchored (kept the original word)", "32,782  (89.5%)", "35,008  (94.4%)"],
+     ["Alternatives offered", "12,247", "4,871"],
+     ["Alternatives kept", "5,177", "3,940"],
+     ["Rejected by the filter", "58%", "19%"],
+     ["OI-WER, IndicConformer", "26.128%", "25.600%"],
+     ["OI-WER, IndicWav2Vec", "51.763%", "51.420%"],
+     ["OI-WER, IndicWhisper", "53.509%", "53.260%"]],
+    [62 * mm, 32 * mm, 32 * mm], highlight_rows=[6, 7, 8])
+P("gemma3n:e2b has roughly half the effective parameters, proposes 2.5 times fewer variants, and has "
+  "them rejected three times less often. It is more conservative and more often right; it also mangles "
+  "the reference less, anchoring 94.4% of groups against 89.5%. Its unique contributions are genuine "
+  "Telugu orthography &mdash; "
+  + TE("చేయడము") + " &rarr; " + TE("చేయడం") + ", "
+  + TE("వాళ్లకి") + " &rarr; " + TE("వాళ్ళకి") + ", "
+  + TE("ఇంట్రస్ట్") + " &rarr; " + TE("ఇంటరెస్ట్")
+  + " &mdash; whereas gemma3:4b's most frequent unique contributions were the short-word confusions "
+  "that prompted the guard above.", "body")
+P("A practical note for anyone reproducing this: gemma3n:e2b is <i>slower</i> despite being smaller. "
+  "Its per-layer-embedding design parks 3.84 GB in pinned host memory rather than VRAM, so tokens "
+  "stream over PCIe. The Ollama log line “31/31 layers offloaded” is misleading; the CUDA0 "
+  "versus CUDA_Host buffer sizes are the figures that matter.", "cap")
 
 P("5. Results", "h2")
 

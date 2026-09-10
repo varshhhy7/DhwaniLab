@@ -1,0 +1,4 @@
+model,gemma3_4b_both_percent,gemma3_4b_llm_only_percent,gemma3_4b_variants_kept,gemma3_4b_variants_offered,gemma3n_e2b_both_percent,gemma3n_e2b_llm_only_percent,gemma3n_e2b_variants_kept,gemma3n_e2b_variants_offered,rules_percent,wer_percent
+indicconformer,26.128,26.879,5177,12247,25.6,26.069,3940,4871,26.925,27.845
+indicwav2vec,51.763,53.619,5177,12247,51.42,52.688,3940,4871,52.485,54.576
+indicwhisper,53.509,55.708,5177,12247,53.26,54.818,3940,4871,54.338,56.762

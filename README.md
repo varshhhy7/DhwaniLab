@@ -27,15 +27,17 @@ scored results.</sub>
 
 | Model | WER | OI-WER | Gain | S | D | I | Decoding |
 |---|---|---|---|---|---|---|---|
-| **IndicConformer** (`indic-conformer-600m-multilingual`) | **27.84%** | **26.08%** | −1.76 | 8,066 | 1,318 | 1,014 | greedy CTC |
-| **IndicWav2Vec** (`te.pt`, Fairseq) | 54.56% | 51.64% | −2.93 | 15,955 | 2,915 | 1,508 | greedy CTC |
-| **IndicWhisper** (`whisper-medium-te_alldata_multigpu`) | 56.74% | 53.41% | −3.36 | 14,410 | 4,702 | 2,079 | autoregressive |
+| **IndicConformer** (`indic-conformer-600m-multilingual`) | **27.84%** | **25.60%** | −2.24 | 8,066 | 1,318 | 1,014 | greedy CTC |
+| **IndicWav2Vec** (`te.pt`, Fairseq) | 54.56% | 51.42% | −3.16 | 15,955 | 2,915 | 1,508 | greedy CTC |
+| **IndicWhisper** (`whisper-medium-te_alldata_multigpu`) | 56.74% | 53.26% | −3.50 | 14,410 | 4,702 | 2,079 | autoregressive |
 
 IndicConformer leads by **26.7 percentage points** over the next best model. The ranking is
 identical under both metrics — OI-WER reorders nothing. S/D/I are the WER-column counts.
 
-Variants come from deterministic rules **plus** a locally-run `gemma3:4b`, filtered so a hallucinated
-variant cannot forgive a real error — see [OI-WER methodology](#oi-wer-methodology).
+Variants come from deterministic rules **plus** a locally-run `gemma3n:e2b`, filtered so a hallucinated
+variant cannot forgive a real error — see [OI-WER methodology](#oi-wer-methodology). Two local
+generators were compared over the full split; the smaller one won — see
+[Choosing the variant generator](#choosing-the-variant-generator).
 
 All three models were scored against byte-identical references (verified: 3,295/3,295 matching) over
 the same 37,350 reference words.
@@ -75,17 +77,20 @@ DhwaniLab/
 │   ├── variant_filter.py               Guardrail for LLM-proposed variants
 │   ├── gen_variants_ollama.py          Variant generation via local Ollama
 │   ├── score_llm.py                    Rules vs LLM vs combined scoring
+│   ├── compare_llms.py                 Variant generators head to head
 │   ├── crosscheck_official.py          Our engine vs AI4Bharat's scorer
 │   ├── run_oiwer.py                    Rule-only ablation runner
 │   ├── test_oiwer.py                   Engine unit tests (9)
-│   ├── test_variant_filter.py          Filter unit tests (11)
+│   ├── test_variant_filter.py          Filter unit tests (14)
 │   └── vendor/                         AI4Bharat oiwer_core.py + Telugu prompt (MIT)
 ├── results/
 │   ├── indicwhisper/  indicconformer/  indicwav2vec/
 │   │   └── indicvoices_telugu_valid.csv
 │   └── oiwer/
-│       ├── variants_gemma3_4b.jsonl    LLM-proposed variants, one line per utterance
+│       ├── variants_gemma3n_e2b.jsonl  Variants used for the headline figures
+│       ├── variants_gemma3_4b.jsonl    Variants from the compared generator
 │       ├── oiwer_llm_full.csv/.json    Rules vs LLM vs combined, all three models
+│       ├── llm_model_comparison.csv    The two generators side by side
 │       └── engine_crosscheck.csv       Agreement with AI4Bharat's scorer
 ├── reports/
 │   ├── gen_report.py                   Builds the PDF from the results files
@@ -170,34 +175,43 @@ Variants come from two independent sources, scored separately so each contributi
 ### Source B — a local LLM, behind a filter
 
 The paper generates variants with Gemini-2.5-Pro and has native speakers review them. With no LLM API
-available, `gemma3:4b` — the largest Gemma that fits in 5 GB of VRAM — was run locally over all 3,295
-references via Ollama, prompted with **AI4Bharat's own expert-verified Telugu guideline examples**
-(vendored from their repository into `oiwer/vendor/prompt_telugu.py`).
+available, local models were run over all 3,295 references via Ollama, prompted with **AI4Bharat's own
+expert-verified Telugu guideline examples** (vendored from their repository into
+`oiwer/vendor/prompt_telugu.py`). `gemma3n:e2b` is the generator used for the headline figures.
 
-A 4B model is not a substitute for Gemini plus human review, and it behaved accordingly: alongside
-genuine spelling variants it produced translations, synonyms and invented words. This matters more
-than it looks, because **a bad variant can only ever make a score better** — alignment takes the
-minimum over variants, so an unfiltered hallucination silently forgives a real error. Every proposal
-therefore passes three gates (`oiwer/variant_filter.py`) before it can touch a score:
+A small local model is not a substitute for Gemini plus human review, and it behaves accordingly:
+alongside genuine spelling variants it produces translations, synonyms and invented words. This
+matters more than it looks, because **a bad variant can only ever make a score better** — alignment
+takes the minimum over variants, so an unfiltered hallucination silently forgives a real error. Every
+proposal therefore passes four gates (`oiwer/variant_filter.py`) before it can touch a score:
 
 | Gate | Rule | Why |
 |---|---|---|
 | **Anchoring** | The group is dropped entirely unless it contains the reference word copied exactly | Kills groups where the model rewrote or invented the original; keeps the reference word count fixed so the denominator cannot drift |
 | **Consonant skeleton** | Strip Telugu vowel signs, virama and anusvara from both; skeletons must agree within 1 edit | Spelling variation preserves the skeleton; a different word does not |
+| **Short-word guard** | For anchors of ≤ 4 characters the skeletons must match **exactly** — only vowel signs may differ | On short words a single edit often lands on a *different real word*, and neither the skeleton nor the ratio test can tell |
 | **Edit ratio** | Character edit distance ≤ 34% of the reference word's length, or identical once spaces are removed | Admits compound splits and merges; rejects distant rewrites |
 
-Accepted: `రీచ్ → రిచ్` (same skeleton, one edit), `తెలంగాణలో → తెలంగాణ లో` (compound split).
-Rejected: `కావడానికి → చేయడానికి` (different word), `ప్లేసెస్ → ప్రదేశాలు` (translation), `నేను → నా`.
+Accepted: `రీచ్ → రిచ్` (same skeleton, one edit), `తెలంగాణలో → తెలంగాణ లో` (compound split),
+`చేయడము → చేయడం` and `వాళ్లకి → వాళ్ళకి` (long enough to keep the consonant slack).
+Rejected: `కావడానికి → చేయడానికి` (different word), `ప్లేసెస్ → ప్రదేశాలు` (translation), `నేను → నా`,
+and — via the short-word guard — `ఈ → ఏ`, `మీకు → నీకు`, `అది → ఆది`, `అండి → అంటే`.
 
-| LLM proposal stage | Count |
+> **Why the short-word guard exists.** It was added after inspecting the accepted variants directly.
+> The four pairs above were among the *most frequent* accepted variants from `gemma3:4b`, each
+> forgiving genuine recognition errors on very common words. Adding the guard removed 1,588 of its
+> 6,765 accepted variants (23%) and moved OI-WER **up** by 0.05–0.12 points — the honest direction.
+> All figures in this README are post-guard.
+
+| LLM proposal stage | `gemma3n:e2b` |
 |---|---|
-| Word groups proposed by `gemma3:4b` | 36,613 |
-| Groups anchored to a reference span | 32,782 |
-| Alternative spellings offered | 12,247 |
-| Alternatives that passed the filter | 6,765 |
-| Reference spans actually augmented | 6,658 |
+| Word groups proposed | 37,069 |
+| Groups anchored to a reference span | 35,008 |
+| Alternative spellings offered | 4,871 |
+| Alternatives that passed the filter | 3,940 |
+| Reference spans actually augmented | 3,900 |
 
-The filter rejected **45%** of what the model proposed.
+The filter rejected **19%** of what the model proposed.
 
 ### Rules vs LLM
 
@@ -208,22 +222,57 @@ The filter rejected **45%** of what the model proposed.
 | WER, raw text (37,350 words) | 27.839% | 54.560% | 56.736% |
 | WER, normalized (37,289 words) | 27.845% | 54.576% | 56.762% |
 | OI-WER, rules only | 26.925% | 52.485% | 54.338% |
-| OI-WER, LLM variants only | 26.834% | 53.498% | 55.606% |
-| OI-WER, rules + LLM | **26.083%** | **51.643%** | **53.407%** |
+| OI-WER, LLM variants only | 26.069% | 52.688% | 54.818% |
+| OI-WER, rules + LLM | **25.600%** | **51.420%** | **53.260%** |
 
 Substitutions removed relative to the normalized-text baseline:
 
 | Variant source | IndicConformer | IndicWav2Vec | IndicWhisper |
 |---|---|---|---|
 | Rules only | 184 | 486 | 618 |
-| LLM only | 306 | 336 | 388 |
-| Rules + LLM | 462 | 770 | 961 |
+| LLM only | 511 | 530 | 584 |
+| Rules + LLM | 612 | 803 | 973 |
 
 The two sources are **nearly additive** — they correct different things. Rules handle number
 formatting and word-boundary placement; the LLM reaches matra and vowel-length differences and
 loanword spellings, which no string rule can produce without a lexicon. ITN removed 124 substitutions
 from IndicWhisper and **zero** from IndicConformer, which never emits digits: the digit-formatting
 penalty was entirely one-sided.
+
+Neither source dominates on its own. The LLM alone beats the rules on IndicConformer (26.07% vs
+26.93%) but loses to them on the other two (52.69% vs 52.49%, 54.82% vs 54.34%), because which error
+class dominates depends on the model's failure mode. **Quote the combined row, not either alone.**
+
+### Choosing the variant generator
+
+Two local models were run over the identical 3,295 references with the identical prompt and filter —
+`python oiwer/compare_llms.py`:
+
+| | `gemma3:4b` | `gemma3n:e2b` |
+|---|---|---|
+| Word groups proposed | 36,613 | 37,069 |
+| Groups anchored (kept the original word) | 32,782 — 89.5% | **35,008 — 94.4%** |
+| Alternatives offered | 12,247 | 4,871 |
+| Alternatives kept | 5,177 | 3,940 |
+| **Rejected by the filter** | **58%** | **19%** |
+| OI-WER, IndicConformer | 26.128% | **25.600%** |
+| OI-WER, IndicWav2Vec | 51.763% | **51.420%** |
+| OI-WER, IndicWhisper | 53.509% | **53.260%** |
+
+`gemma3n:e2b` has roughly **half** the effective parameters yet wins on all three models. It proposes
+2.5× fewer variants and has them rejected three times less often — it is more conservative and more
+often right. It also mangles the reference less, anchoring 94.4% of groups against 89.5%.
+
+Inspecting the accepted variants unique to each explains the gap. `gemma3n:e2b` contributes genuine
+Telugu orthography — `చేయడము → చేయడం` (ము/ం), `వాళ్లకి → వాళ్ళకి` (gemination), `డేస్లో → డేస్‌లో`
+(zero-width non-joiner), `ఇంట్రస్ట్ → ఇంటరెస్ట్` (loanword). `gemma3:4b`'s most frequent unique
+contributions were the short-word confusions listed above, which is what prompted the short-word
+guard.
+
+> Practical note: `gemma3n:e2b` is *slower* here despite being smaller. Its per-layer-embedding design
+> parks 3.84 GB in pinned host memory (`CUDA_Host`) rather than VRAM, so tokens stream over PCIe —
+> ~0.5 utt/s against `gemma3:4b`'s ~0.5–0.7, on an RTX 3050 6 GB. "31/31 layers offloaded" in the
+> Ollama log is misleading; check the `CUDA0` vs `CUDA_Host` buffer sizes instead.
 
 ### Validation against AI4Bharat's own scorer
 
@@ -236,9 +285,9 @@ inputs across the full split — `python oiwer/crosscheck_official.py`:
 | no variants | IndicConformer | 27.845% | 27.845% | **0.000** |
 | no variants | IndicWav2Vec | 54.576% | 54.576% | **0.000** |
 | no variants | IndicWhisper | 56.762% | 56.762% | **0.000** |
-| rules + LLM | IndicConformer | 26.083% | 26.898% | 0.815 |
-| rules + LLM | IndicWav2Vec | 51.643% | 53.584% | 1.942 |
-| rules + LLM | IndicWhisper | 53.407% | 55.392% | 1.984 |
+| rules + LLM | IndicConformer | 25.600% | 26.144% | 0.544 |
+| rules + LLM | IndicWav2Vec | 51.420% | 52.788% | 1.368 |
+| rules + LLM | IndicWhisper | 53.260% | 54.638% | 1.378 |
 
 **With variants switched off the two engines agree exactly on all 3,295 utterances** — the strongest
 available evidence that our alignment and counting are correct.
@@ -255,11 +304,15 @@ the digit or merged form.
 
 - **This is still an approximation of the published metric.** The paper pairs Gemini-2.5-Pro with
   review by 61 native speakers across seven variation categories. This pairs hand-written rules with
-  an unreviewed 4B local model behind a deliberately strict filter — which rejects genuine variants
-  along with bad ones. Read these figures as a **lower bound** on the true OI-WER gain.
-- **No native speaker has reviewed anything yet** — neither the Telugu number lexicon nor the 6,765
+  an unreviewed 2B-effective local model behind a deliberately strict filter — which rejects genuine
+  variants along with bad ones. Read these figures as a **lower bound** on the true OI-WER gain.
+- **No native speaker has reviewed anything yet** — neither the Telugu number lexicon nor the 3,940
   accepted LLM variants. This is the cheapest available improvement in confidence; the accepted
   variants are stored and can be reviewed as a flat list.
+- **The filter is tuned against observed failures, not against a gold standard.** The short-word guard
+  exists because four specific confusions were spotted by eye in the accepted output. Other failure
+  modes that were not spotted are, by definition, still getting through. `ఇప్పుడు → ఇప్పుడే` is one
+  known survivor: orthographically a single matra, semantically "now" vs "right now".
 - **The LLM variants are unvalidated against a gold set.** We can show what the filter rejects, but
   without AI4Bharat's own annotations we cannot measure what fraction of true variants it misses.
 
@@ -279,15 +332,17 @@ the digit or merged form.
 4. `notebooks/model_comparison.ipynb` — verifies all three CSVs and recomputes WER (CPU only)
 5. `python oiwer/run_oiwer.py` — rule-only OI-WER ablation (CPU only, runs in seconds)
 6. `python oiwer/test_oiwer.py` — 9 engine tests, incl. exact reproduction of the published WER figures
-7. `python oiwer/test_variant_filter.py` — 11 filter tests, incl. the specific gemma hallucinations
-8. `python oiwer/gen_variants_ollama.py` — LLM variants (see below; ~2 h, resumable, CPU/GPU local)
-9. `python oiwer/score_llm.py` — rules vs LLM vs combined, all three models (CPU, ~1 min)
-10. `python oiwer/crosscheck_official.py` — agreement with AI4Bharat's scorer (CPU, needs `numpy` + `indic-nlp-library`)
+7. `python oiwer/test_variant_filter.py` — 14 filter tests, incl. the specific gemma hallucinations
+8. `python oiwer/gen_variants_ollama.py --model gemma3n:e2b` — LLM variants (see below; ~2 h, resumable, local GPU)
+9. `python oiwer/score_llm.py --variants results/oiwer/variants_gemma3n_e2b.jsonl` — rules vs LLM vs combined (CPU, ~1 min)
+10. `python oiwer/compare_llms.py` — the two variant generators side by side (CPU, ~2 min)
+11. `python oiwer/crosscheck_official.py --variants results/oiwer/variants_gemma3n_e2b.jsonl` — agreement with AI4Bharat's scorer (CPU, needs `numpy` + `indic-nlp-library`)
 
-Steps 8–10 are optional: `results/oiwer/variants_gemma3_4b.jsonl` is committed, so step 9 runs
+Steps 8–11 are optional: both variant files are committed, so step 9 runs
 without regenerating anything.
 
-**LLM variant generation.** Requires [Ollama](https://ollama.com) with `ollama pull gemma3:4b`. The
+**LLM variant generation.** Requires [Ollama](https://ollama.com) with `ollama pull gemma3n:e2b`
+(and `gemma3:4b` to reproduce the generator comparison). The
 generator is resumable — it keys on utterance index and skips what is already in the output file, so
 an interrupted run continues rather than restarting. Throughput depends on `OLLAMA_NUM_PARALLEL`; the
 default of 1 serialises requests regardless of `--workers`. On an RTX 3050 6 GB (33/35 layers
@@ -321,7 +376,8 @@ only — use the SVG renderer whenever the labels need to be correct.
 - [x] IndicConformer baseline on IndicVoices Telugu
 - [x] Unified comparison with reference-integrity verification
 - [x] OI-WER, rule-based approximation following [arXiv:2603.00941](https://arxiv.org/abs/2603.00941)
-- [x] OI-WER with LLM-generated variants (`gemma3:4b`, filtered) over the full split
+- [x] OI-WER with LLM-generated variants, filtered, over the full split
+- [x] Two local variant generators compared head to head (`gemma3:4b` vs `gemma3n:e2b`)
 - [x] Validation against AI4Bharat's released `oiwer_core.py` — exact agreement without variants
 - [ ] Native-speaker review of the accepted variants and the Telugu number lexicon
 - [ ] Full OI-WER with a frontier LLM + human review (all 7 categories)

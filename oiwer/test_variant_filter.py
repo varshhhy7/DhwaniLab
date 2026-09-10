@@ -89,6 +89,26 @@ def test_itn_span_not_clobbered():
     assert merged == spans
 
 
+def test_rejects_short_function_word_swaps():
+    assert not admissible("ఈ", "ఏ")
+    assert not admissible("మీకు", "నీకు")
+    assert not admissible("అది", "ఆది")
+    assert not admissible("అండి", "అంటే")
+
+
+def test_keeps_short_matra_variants():
+    assert admissible("హలో", "హెలో")
+    assert admissible("కూడా", "కుడా")
+    assert admissible("చాలా", "చాల")
+    assert admissible("కానీ", "కాని")
+    assert admissible("సార్", "సార")
+
+
+def test_keeps_long_word_consonant_variants():
+    assert admissible("చేయడము", "చేయడం")
+    assert admissible("వాళ్లకి", "వాళ్ళకి")
+    assert admissible("ఉంటుంది", "వుంటుంది")
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     failed = 0

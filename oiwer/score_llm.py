@@ -170,6 +170,8 @@ def main():
                     t.deletions, t.insertions, t.reference_words,
                 ])
     summary = {
+        "variant_source": Path(args.variants).stem.replace("variants_", ""),
+        "variant_file": Path(args.variants).name,
         "variant_records": len(variants),
         "scope": "subset" if subset else "full",
         "utterances": len(subset) if subset else len(load_predictions(available[0])),

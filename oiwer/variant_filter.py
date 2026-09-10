@@ -35,7 +35,11 @@ def edit_distance(a, b):
     return previous[-1]
 
 
-def admissible(anchor, variant, skeleton_slack=1, ratio=0.34, floor=2):
+SHORT_WORD = 4
+
+
+def admissible(anchor, variant, skeleton_slack=1, ratio=0.34, floor=2,
+               short_word=SHORT_WORD):
     a = anchor.replace(" ", "")
     b = variant.replace(" ", "")
 
@@ -45,7 +49,9 @@ def admissible(anchor, variant, skeleton_slack=1, ratio=0.34, floor=2):
         return True
     if len(b) > 2 * len(a) + 2:
         return False
-    if edit_distance(skeleton(a), skeleton(b)) > skeleton_slack:
+
+    slack = 0 if len(a) <= short_word else skeleton_slack
+    if edit_distance(skeleton(a), skeleton(b)) > slack:
         return False
     if edit_distance(a, b) > max(floor, int(ratio * len(a))):
         return False

@@ -1,5 +1,7 @@
 {
-  "variant_records": 3256,
+  "variant_source": "gemma3n_e2b",
+  "variant_file": "variants_gemma3n_e2b.jsonl",
+  "variant_records": 3266,
   "scope": "full",
   "utterances": 3295,
   "configurations": {
@@ -74,56 +76,56 @@
     },
     "OIWER LLM only": {
       "indicconformer": {
-        "wer_percent": 26.834,
-        "substitutions": 7712,
-        "deletions": 1307,
-        "insertions": 987,
+        "wer_percent": 26.069,
+        "substitutions": 7507,
+        "deletions": 1312,
+        "insertions": 902,
         "reference_words": 37289
       },
       "indicwav2vec": {
-        "wer_percent": 53.498,
-        "substitutions": 15583,
-        "deletions": 2906,
-        "insertions": 1460,
+        "wer_percent": 52.688,
+        "substitutions": 15389,
+        "deletions": 2936,
+        "insertions": 1322,
         "reference_words": 37289
       },
       "indicwhisper": {
-        "wer_percent": 55.606,
-        "substitutions": 13979,
-        "deletions": 4707,
-        "insertions": 2049,
+        "wer_percent": 54.818,
+        "substitutions": 13783,
+        "deletions": 4753,
+        "insertions": 1905,
         "reference_words": 37289
       }
     },
     "OIWER rules + LLM": {
       "indicconformer": {
-        "wer_percent": 26.083,
-        "substitutions": 7556,
-        "deletions": 1306,
-        "insertions": 864,
+        "wer_percent": 25.6,
+        "substitutions": 7406,
+        "deletions": 1312,
+        "insertions": 828,
         "reference_words": 37289
       },
       "indicwav2vec": {
-        "wer_percent": 51.643,
-        "substitutions": 15149,
-        "deletions": 2878,
-        "insertions": 1230,
+        "wer_percent": 51.42,
+        "substitutions": 15116,
+        "deletions": 2880,
+        "insertions": 1178,
         "reference_words": 37289
       },
       "indicwhisper": {
-        "wer_percent": 53.407,
-        "substitutions": 13406,
-        "deletions": 4667,
-        "insertions": 1842,
+        "wer_percent": 53.26,
+        "substitutions": 13394,
+        "deletions": 4676,
+        "insertions": 1790,
         "reference_words": 37289
       }
     }
   },
   "llm_slot_statistics": {
-    "slots": 36613,
-    "anchored": 32782,
-    "variants_offered": 12247,
-    "variants_kept": 6765,
-    "spans_augmented": 6658
+    "slots": 37069,
+    "anchored": 35008,
+    "variants_offered": 4871,
+    "variants_kept": 3940,
+    "spans_augmented": 3900
   }
 }

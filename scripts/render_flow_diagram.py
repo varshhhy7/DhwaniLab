@@ -128,6 +128,7 @@ def load_numbers():
         "rules": [cfg["OIWER rules only"][m]["wer_percent"] for m in MODELS],
         "llm": [cfg["OIWER LLM only"][m]["wer_percent"] for m in MODELS],
         "words": cfg["WER (normalized text)"][MODELS[0]]["reference_words"],
+        "generator": data.get("variant_source", "local LLM").replace("_", ":"),
         "rejected": round(100.0 * (offered - kept) / offered) if offered else 0,
         "offered": offered,
         "kept": kept,
@@ -190,7 +191,7 @@ def build(n):
          "NFC, punctuation, <unintelligible> removal"],
         GREEN_FILL, GREEN_EDGE)
 
-    box(880, 516, 520, 76, "gemma3:4b · local, via Ollama",
+    box(880, 516, 520, 76, n["generator"] + " · local, via Ollama",
         ["prompted with AI4Bharat's expert-verified Telugu guidelines"],
         AMBER_FILL, AMBER_EDGE)
 
@@ -199,7 +200,8 @@ def build(n):
     box(880, 616, 520, 148, "oiwer/variant_filter.py",
         ["1.  group must contain the original word",
          "2.  consonant skeleton within 1 edit",
-         "3.  edit distance ≤ 34%, or equal without spaces"],
+         "3.  short words (≤ 4 chars): skeleton must match exactly",
+         "4.  edit distance ≤ 34%, or equal without spaces"],
         AMBER_FILL, AMBER_EDGE,
         accent="{:,} offered  →  {:,} kept  ·  {}% rejected".format(
             n["offered"], n["kept"], n["rejected"]))
